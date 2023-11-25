@@ -31,7 +31,7 @@ def reconstruct_matrix(eigenvalues, eigenvectors):
     inv_eigen_vector = np.linalg.inv(eigenvectors)
     Lambda = np.diag(eigenvalues)
     recon_matrix = np.dot(np.dot(eigenvectors, Lambda), inv_eigen_vector)
-    return recon_matrix
+    return np.real(recon_matrix)
 
 def check_reconstruction(matrix, recon_matrix):
     return np.allclose(matrix, recon_matrix)

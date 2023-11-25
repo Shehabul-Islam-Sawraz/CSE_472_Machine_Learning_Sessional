@@ -5,15 +5,15 @@ import matplotlib.pyplot as plt
 # Read the image and convert it to grayscale
 image = cv2.imread('image1.jpg', cv2.IMREAD_GRAYSCALE)
 
-# Optionally resize the image
+# Resize the image
 image = cv2.resize(image, (500, 700))  # Uncomment this line for resizing
 
 # Perform Singular Value Decomposition (SVD)
 U, S, Vt = np.linalg.svd(image, full_matrices=False)
 
 def low_rank_approximation(A, k):
-    Ak = np.dot(U[:, :k], np.dot(np.diag(S[:k]), Vt[:k, :]))
-    return Ak
+    approx = np.dot(U[:, :k], np.dot(np.diag(S[:k]), Vt[:k, :]))
+    return approx
 
 # Vary k and plot the resultant k-rank approximation
 num_values = 12

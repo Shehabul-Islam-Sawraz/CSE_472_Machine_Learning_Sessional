@@ -2,12 +2,12 @@ import numpy as np
 
 RANGE = 16
 
-'''
-    `generate_invertible_matrix` generates a random integer matrix and ensures whether it 
-    is invertible or not, by checking its rank. If the rank is not equal to the dimension n, 
-    it generates a new matrix until an invertible one is found.
-'''
-def generate_invertible_matrix(n):
+def generate_invertible_symmetric_matrix(n):
+    '''
+        `generate_invertible_symmetric_matrix` generates a random integer matrix and ensures whether it 
+        is invertible or not, by checking its rank. If the rank is not equal to the dimension n, 
+        it generates a new matrix until an invertible one is found.
+    '''
     # # Generate a random n x n matrix with integer values
     # matrix = np.random.randint(-RANGE, RANGE, size=(n,n))
     # matrix = (matrix+matrix.T)
@@ -25,11 +25,17 @@ def generate_invertible_matrix(n):
     #         break  # If Cholesky factorization succeeds, A is invertible
     #     except np.linalg.LinAlgError:
     #         matrix = np.random.randint(-RANGE, RANGE, size=(n,n))
-    #         loop = loop+1
     #         matrix = (matrix + matrix.T)
-    # print(loop)
     # return matrix
     
+    
+    '''
+        `generate_invertible_symmetric_matrix` generates a Diagonally Dominant Matrix 
+        where the absolute value of each diagonal element is greater than the sum of 
+        the absolute values of the other elements in the corresponding row. 
+        Follow this for more info: https://en.wikipedia.org/wiki/Diagonally_dominant_matrix
+    '''
+    # Generate a random n x n matrix with integer values
     matrix = np.random.randint(-RANGE, RANGE, size=(n,n))
     # print(matrix)
     
@@ -50,7 +56,7 @@ def reconstruct_matrix(eigenvalues, eigenvectors):
     inv_eigen_vector = np.linalg.inv(eigenvectors)
     Lambda = np.diag(eigenvalues)
     recon_matrix = np.dot(np.dot(eigenvectors, Lambda), inv_eigen_vector)
-    return recon_matrix
+    return np.real(recon_matrix)
 
 def check_reconstruction(matrix, recon_matrix):
     return np.allclose(matrix, recon_matrix)
@@ -59,7 +65,7 @@ def main():
     # Take input for matrix dimensions
     n = int(input("Enter the dimensions of the matrix(n): "))
     # Generate an invertible matrix
-    matrix = generate_invertible_matrix(n)
+    matrix = generate_invertible_symmetric_matrix(n)
 
     # Perform Eigen Decomposition
     eigenvalues, eigenvectors = np.linalg.eig(matrix)
