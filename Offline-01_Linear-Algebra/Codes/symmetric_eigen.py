@@ -42,7 +42,7 @@ def generate_invertible_symmetric_matrix(n):
     # Make the diagonal elements larger than the sum of other elements in the row
     for i in range(n):
         matrix[i, i] = np.sum(np.abs(matrix[i])) + 1
-    
+    matrix = (matrix+matrix.T)
     return matrix
 
 
