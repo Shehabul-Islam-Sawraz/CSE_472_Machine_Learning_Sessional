@@ -18,6 +18,8 @@ np.seterr(divide='ignore', invalid='ignore')
 # without explicit copy or assignment.
 pd.options.mode.chained_assignment = None
 
+
+#####################################################
 """
     Telco Customer Churn: https://www.kaggle.com/blastchar/telco-customer-churn  
 """
@@ -90,7 +92,7 @@ numeric_colms = ['age', 'fnlwgt', 'education-num', 'capital-gain',
 
 def adult_dataset_preprocessing():
     df_train = pd.read_csv("../Datasets/adult/adult.data", header=None, names=column_labels)
-    df_test = pd.read_csv("../Datasets/adult/adult.test", header=None, skiprows=1, names=column_labelss)
+    df_test = pd.read_csv("../Datasets/adult/adult.test", header=None, skiprows=1, names=column_labels)
     
     # df_train.columns = column_labels
     # df_test.columns = column_labels
@@ -128,8 +130,9 @@ def adult_dataset_preprocessing():
     
     for col in ['workclass', 'occupation', 'native-country']:
         data_frame[col].replace({'?': np.nan}, inplace=True)
-        data_frame[col] = categorical_imputer.fit_transform(data_frame[[col]])
-    
+        transformed_col = categorical_imputer.fit_transform(data_frame[[col]])
+        data_frame[col] = transformed_col.ravel()  # Assign the transformed values back to the DataFrame column
+        
     # One-Hot Encoding for Multi-value features
     data_frame = pd.get_dummies(
         data_frame, 
@@ -166,3 +169,806 @@ def adult_dataset_preprocessing():
         df_test.to_numpy(), 
         df_test_target.to_numpy()
     )
+    
+    
+"""
+    Credit Card Fraud Detection: https://www.kaggle.com/mlg-ulb/creditcardfraud   
+"""
+def credit_card_fraud_detection_dataset_preprocessing(use_smaller_subset=False):
+    df = pd.read_csv('../Datasets/creditcard.csv')
+    
+    # Separating data samples based on value in 'Class' column
+    df_0 = df[df['Class'] == 0]
+    df_1 = df[df['Class'] == 1]
+    
+    # Splitting data frame 0(df_0) and data frame 1(df_1) into 
+    # training and testing sets
+    train_df_0 = df_0.sample(frac=0.8, random_state=1)
+    test_df_0 = df_0.drop(train_df_0.index)
+    
+    if use_smaller_subset:
+        train_df_0 = train_df_0.sample(n=16000, random_state=1)
+        test_df_0= test_df_0.sample(n=4000, random_state=1)
+    
+    train_df_1 = df_1.sample(frac=0.8, random_state=1)
+    test_df_1 = df_1.drop(train_df_1.index)
+    
+    # Concatenating train_df_0 and train_df_1, test_df_0 and test_df_1
+    df_train = pd.concat([train_df_0, train_df_1], ignore_index=True).sample(frac=1, random_state=1)
+    df_test = pd.concat([test_df_0, test_df_1], ignore_index=True).sample(frac=1, random_state=1)
+    
+    # Separating target columns from data frames
+    df_train_target = df_train['Class']
+    df_train.drop(['Class'], inplace=True, axis=1)
+    
+    df_test_target = df_test['Class']
+    df_test.drop(['Class'], inplace=True, axis=1)
+    
+    # Standardizing specific columns in data frames
+    standard_scaler = StandardScaler()
+    
+    for col in list(df_train.columns):
+        df_train[col] = standard_scaler.fit_transform(df_train[[col]])
+        
+    for col in list(df_test.columns):
+        df_test[col] = standard_scaler.fit_transform(df_test[[col]])
+    
+    return (
+        df_train.to_numpy(), 
+        df_train_target.to_numpy(), 
+        df_test.to_numpy(), 
+        df_test_target.to_numpy()
+    )
+##################################################### 
+ 
+ 
+##########################Logistic Regression###########################   
+"""
+    Logistic Regression
+"""
+def sigmoid(x):
+    return (np.exp(x) / (1 + np.exp(x)))
+
+"""
+    1.X.mean(axis=0): This calculates the mean value along each 
+    column (axis=0) of the training set X. It computes the average 
+    value for each feature.
+
+    2. X.std(axis=0): This calculates the standard deviation along 
+    each column (axis=0) of the training set X. It computes how much 
+    the values within each feature deviate from their mean.
+
+    3. (X - X.mean(axis=0)): This subtracts the mean of each feature 
+    from every value in that feature's column. This centers the data 
+    around zero.
+
+    4. Divide by X.std(axis=0): This division scales the centered 
+    values by the standard deviation of each feature. It 
+    standardizes the data, ensuring that each feature has a 
+    variance of 1
+"""
+def normalize(X):
+    X = X.astype(float)
+    # standardizing to have zero mean and unit variance
+    return (X - X.mean(axis=0)) / X.std(axis=0)
+
+def gradient_descent(x_train, y, y_predicted):
+    num_samples = x_train.shape[0]
+    dw = np.dot(x_train.T, (y - y_predicted) * y_predicted * (1 - y_predicted)) / num_samples
+    return dw
+
+def compute_loss(x_train, y, w):
+    y_predicted = sigmoid(np.dot(x_train, w))
+    loss = - np.mean(y * np.log(y_predicted) + (1 - y) * np.log(1 - y_predicted))
+    return loss
+
+def logistic_regression(x_train, y, epochs=1000, learning_rate=0.01, early_stopping_threshold=0):
+    num_samples, num_features = x_train.shape
+    
+    # Normalizing train set
+    x_train = normalize(x_train)
+    
+    # Initializing weights w to zero
+    # This will create a matrix of size (num_features + 1) X 1
+    w = np.zeros((num_features + 1, 1))
+    
+    # Add a column of 1s for the bias term
+    x_train = np.concatenate((x_train, np.ones((num_samples, 1))), axis=1)
+    
+    # Reshaping target y
+    y = y.reshape(num_samples, 1)
+    
+    for _ in range(epochs):
+        # Calculate hypothesis
+        y_predicted = sigmoid(np.dot(x_train, w))
+        
+        # Calculate gradients of loss with respect to weights w
+        dw = gradient_descent(x_train, y, y_predicted)
+        
+        # Updating parameters weights w
+        # print("====================")
+        # print(w.dtype)
+        # print(dw.dtype)
+        # print("====================")
+        dw = dw.astype(float)
+        w += (learning_rate * dw)
+        
+        loss = compute_loss(x_train, y, w)
+        
+        # Early termination of gradient descent
+        if loss < early_stopping_threshold:
+            break
+    
+    return w
+
+def predict(x_train, w):
+    num_samples = x_train.shape[0]
+    
+    # normalizing inputs X
+    x_train = normalize(x_train)
+    
+    # Add a column of 1s for the bias term
+    x_train = np.concatenate((x_train, np.ones((num_samples, 1))), axis=1)
+    
+    # Calculate hypothesis
+    y_predicted = sigmoid(np.dot(x_train, w))
+    
+    # Determining and storing predictions
+    predictions = [1 if y_pred >= 0.5 else 0 for y_pred in y_predicted]
+    
+    return np.array(predictions).reshape(num_samples, 1)
+
+#####################################################
+
+
+#########################Adaptive Boosting############################
+"""
+    Adaptive Boosting
+"""
+# Precision to avoid division by 0
+EPS = 1E-12
+
+def adaptive_boosting(X, y, num_of_estimators):
+    num_samples, num_features = X.shape
+    
+    # Initialize local variables
+    # 𝐰, a vector of N example weights,initially 1/𝑁
+    # np.full: NumPy function that creates a new array with a 
+    # specified shape and fills it with a specified value.
+    example_weights = np.full((num_samples), 1/num_samples)
+    # 𝐡, a vector of K(num_of_estimators) hypothesis
+    hypothesis = []
+    # 𝐳, a vector of K(num_of_estimators) hypothesis weights
+    hypothesis_weights = []
+    
+    print('fitting ' + str(num_of_estimators) + ' models')
+    for k in range(num_of_estimators):
+        # Resample input examples
+        examples = np.concatenate((X, y), axis=1)
+        # replace=True: This parameter allows sampling with 
+        # replacement, meaning the same element can be chosen 
+        # multiple times.
+        # p=example_weights: example_weights is likely an array 
+        # of weights associated with each example, indicating the 
+        # probability of selecting each example.
+        data = examples[np.random.choice(num_samples, size=num_samples, replace=True, p=example_weights)]
+        
+        data_X = data[:, :num_features]
+        data_y = data[:, -1:]
+        
+        # Getting hypothesis from a weak learning algorithm
+        w = logistic_regression(
+            data_X, 
+            data_y, 
+            epochs=100, 
+            learning_rate=0.01, 
+            early_stopping_threshold=0
+        )
+        
+        # Predicting target values with hypothesis
+        y_predicted = predict(X, w)
+        
+        # Printing accuracy of hypothesis
+        print("Accuracy: ")
+        print(np.sum(y == y_predicted) / num_samples)
+        
+        # Calculating error for hypothesis
+        # Check if error is too high
+        error = 0
+        for i in range(num_samples):
+            error += (example_weights[i] if y[i] != y_predicted[i] else 0)
+        
+        if error > 0.5:
+            continue
+        else:
+            hypothesis.append(w)
+            
+        if error == 0:
+            error = EPS
+        
+        # Updating example_weights
+        for i in range(num_samples):
+            example_weights[i] = example_weights[i] * ((error / (1 - error)) if y[i] == y_predicted[i] else 1)
+        
+        # Normalize example_weights
+        example_weights /= np.sum(example_weights)
+        
+        # Updating hypothesis_weights
+        hypothesis_weights.append(np.log((1 - error) / error))
+    
+    return hypothesis, np.array(hypothesis_weights).reshape(len(hypothesis), 1)
+
+
+def weighted_majority(X, hypothesis, hypothesis_weights):
+    num_samples = X.shape[0]
+    num_hypotheses = len(hypothesis)
+    
+    # Normalizing inputs X
+    X = normalize(X)
+    
+    # X = np.concatenate((X, np.ones((num_samples, 1))), axis=1)
+    
+    # Calculating hypotheses
+    y_predicts = []
+    
+    for i in range(num_hypotheses):
+        # y_predicted = (1 + sigmoid(np.dot(X, hypothesis[i]))) / 2
+        y_predicted = predict(X, hypothesis[i])
+        y_predicts.append([1 if y_pred >= 0.5 else -1 for y_pred in y_predicted])
+        
+    y_predicts = np.array(y_predicts)
+    
+    # Calculating weighted majority hypothesis and storing predictions
+    weighted_majority_hypothesis = np.dot(y_predicts.T, hypothesis_weights)
+    predictions = [1 if y_pred >= 0 else 0 for y_pred in weighted_majority_hypothesis]
+    
+    return np.array(predictions).reshape(num_samples, 1)
+
+#####################################################
+
+
+##########################Performance Prediction###########################
+"""
+    Performance Prediction
+"""
+def performance_matrix(y_true, y_predicted):
+    num_samples = y_true.shape[0]
+    
+    # Initializing confusion matrix values
+    TP = 0
+    TN = 0
+    FP = 0
+    FN = 0
+    
+    # calculating and storing confusion matrix outcomes
+    for i in range(num_samples):
+        if y_true[i] == 0:
+            if y_true[i] == y_predicted[i]:
+                TN += 1
+            else:
+                FP += 1
+        elif y_true[i] == 1:
+            if y_true[i] == y_predicted[i]:
+                TP += 1
+            else:
+                FN += 1
+    
+    # Calculating and storing Performance Measures
+    accuracy = (TP + TN) / (TP + FN + TN + FP)
+    precision = TP / (TP + FP)
+    recall = TP / (TP + FN)
+    specificity = TN / (TN + FP)
+    false_discovery_rate = FP / (TP + FP)
+    f1_score = 2 * recall * precision / (recall + precision)
+    
+    return (accuracy, recall, specificity, precision, false_discovery_rate, f1_score)
+
+#####################################################
+
+
+#####################################################
+"""
+    Printing Performance Measures
+"""
+def print_LR_performance_measures(X_train, y_train, X_test, y_test, dataset_name, epochs=1000, learning_rate=0.01, early_stopping_threshold=0):
+    w = logistic_regression(
+        X_train, 
+        y_train, 
+        epochs=epochs, 
+        learning_rate=learning_rate, 
+        early_stopping_threshold=early_stopping_threshold
+    )
+
+    (
+        accuracy, 
+        recall,
+        specificity, 
+        precision, 
+        false_discovery_rate, 
+        f1_score
+    ) = performance_matrix(y_train, predict(X_train, w))
+
+    print(
+        f'Logistic Regression Performance Measures for {dataset_name} Dataset: Train\n'
+        f'Accuracy: {accuracy}\n'
+        f'Recall: {recall}\n'
+        f'Specificity: {specificity}\n'
+        f'Precision: {precision}\n'
+        f'False Discovery Rate: {false_discovery_rate}\n'
+        f'F1 Score: {f1_score}\n'
+    )
+    
+    (
+        accuracy, 
+        recall, 
+        specificity, 
+        precision, 
+        false_discovery_rate, 
+        f1_score
+    ) = performance_matrix(y_test, predict(X_test, w))
+
+    print(
+        f'Logistic Regression Performance Measures for {dataset_name} Dataset: Test\n'
+        f'Accuracy: {accuracy}\n'
+        f'Recall: {recall}\n'
+        f'Specificity: {specificity}\n'
+        f'Precision: {precision}\n'
+        f'False Discovery Rate: {false_discovery_rate}\n'
+        f'F1 Score: {f1_score}\n'
+    )
+    
+    
+def print_adaboost_performance_measures(X_train, y_train, X_test, y_test, dataset_name):
+    for K in range(5, 24, 5):
+        (
+            hypothesis, 
+            hypothesis_weights
+        ) = adaptive_boosting(X_train, y_train, num_of_estimators=K)
+        
+        (
+            accuracy, 
+            recall, 
+            specificity, 
+            precision, 
+            false_discovery_rate, 
+            f1_score
+        ) = performance_matrix(
+            y_train, 
+            weighted_majority(X_train, hypothesis, hypothesis_weights)
+        )
+
+        print(f'AdaBoost (k -> {len(hypothesis)} hypothesis) for {dataset_name} Dataset: Train\nAccuracy: {accuracy}\n')
+        
+        (
+            accuracy, 
+            recall, 
+            specificity, 
+            precision, 
+            false_discovery_rate, 
+            f1_score
+        ) = performance_matrix(
+            y_test, 
+            weighted_majority(X_test, hypothesis, hypothesis_weights)
+        )
+
+        print(f'AdaBoost (k -> {len(hypothesis)} hypothesis) for {dataset_name} Dataset: Test\nAccuracy: {accuracy}\n')
+
+#####################################################
+
+
+################Splitting Datasets into Training and Testing Features and Targets################
+"""
+    Telco Customer Churn Dataset 
+"""
+telco_customer_df_features, \
+telco_customer_df_target = telco_customer_churn_dataset_preprocessing()
+
+(
+    train_telco_churn_features, 
+    test_telco_churn_features, 
+    train_telco_churn_target, 
+    test_telco_churn_target
+) = train_test_split(telco_customer_df_features, \
+    telco_customer_df_target, test_size=0.2, random_state=1)
+
+train_telco_churn_target = train_telco_churn_target.reshape(train_telco_churn_target.shape[0], 1)
+test_telco_churn_target = test_telco_churn_target.reshape(test_telco_churn_target.shape[0], 1)
+
+
+"""
+    Adult Salary Scale Dataset 
+"""
+(
+    train_adult_df_features, 
+    train_adult_df_target, 
+    test_adult_df_features, 
+    test_adult_df_target
+) = adult_dataset_preprocessing()
+
+train_adult_df_target = train_adult_df_target.reshape(train_adult_df_target.shape[0], 1)
+test_adult_df_target = test_adult_df_target.reshape(test_adult_df_target.shape[0], 1)
+
+"""
+    Credit Card Fraud Detection Dataset
+"""
+(
+    train_creditcard_df_features, 
+    train_creditcard_df_target, 
+    test_creditcard_df_features, 
+    test_creditcard_df_target
+) = credit_card_fraud_detection_dataset_preprocessing(use_smaller_subset=False)
+
+train_creditcard_df_target = train_creditcard_df_target.reshape(train_creditcard_df_target.shape[0], 1)
+test_creditcard_df_target = test_creditcard_df_target.reshape(test_creditcard_df_target.shape[0], 1)
+
+
+"""
+    Credit Card Fraud Detection Dataset(Smaller Subset)
+"""
+(
+    train_card_sub_df_features, 
+    train_card_sub_df_target, 
+    test_card_sub_df_features, 
+    test_card_sub_df_target
+) = credit_card_fraud_detection_dataset_preprocessing(use_smaller_subset=True)
+
+train_card_sub_df_target = train_card_sub_df_target.reshape(train_card_sub_df_target.shape[0], 1)
+test_card_sub_df_target = test_card_sub_df_target.reshape(test_card_sub_df_target.shape[0], 1)
+
+#####################################################
+
+
+##########################Logistic Regression###########################
+"""
+    Telco Customer Churn
+"""
+# w = logistic_regression(
+#     train_telco_churn_features, 
+#     train_telco_churn_target, 
+#     epochs=1000, 
+#     learning_rate=0.01, 
+#     early_stopping_threshold=0
+# )
+
+# (
+#     accuracy, 
+#     recall,
+#     specificity, 
+#     precision, 
+#     false_discovery_rate, 
+#     f1_score
+# ) = performance_matrix(train_telco_churn_target, predict(train_telco_churn_features, w))
+
+# print(
+#     f'Logistic Regression Performance Measures for Telco Customer Churn Dataset: Train\n'
+#     f'Accuracy: {accuracy}\n'
+#     f'Recall: {recall}\n'
+#     f'Specificity: {specificity}\n'
+#     f'Precision: {precision}\n'
+#     f'False Discovery Rate: {false_discovery_rate}\n'
+#     f'F1 Score: {f1_score}\n'
+# )
+
+# (
+#     accuracy, 
+#     recall, 
+#     specificity, 
+#     precision, 
+#     false_discovery_rate, 
+#     f1_score
+# ) = performance_matrix(test_telco_churn_target, predict(test_telco_churn_features, w))
+
+# print(
+#     f'Logistic Regression Performance Measures for Telco Customer Churn Dataset: Test\n'
+#     f'Accuracy: {accuracy}\n'
+#     f'Recall: {recall}\n'
+#     f'Specificity: {specificity}\n'
+#     f'Precision: {precision}\n'
+#     f'False Discovery Rate: {false_discovery_rate}\n'
+#     f'F1 Score: {f1_score}\n'
+# )
+
+print_LR_performance_measures(train_telco_churn_features, train_telco_churn_target,
+                           test_telco_churn_features, test_telco_churn_target,
+                           "Telco Customer Churn", epochs=1000, learning_rate=0.01,
+                           early_stopping_threshold=0)
+
+"""
+    Adult Salary scale
+"""
+# w = logistic_regression(
+#     train_adult_df_features, 
+#     train_adult_df_target, 
+#     epochs=1000, 
+#     learning_rate=0.01, 
+#     early_stopping_threshold=0
+# )
+
+# (
+#     accuracy, 
+#     recall,
+#     specificity, 
+#     precision, 
+#     false_discovery_rate, 
+#     f1_score
+# ) = performance_matrix(train_adult_df_target, predict(train_adult_df_features, w))
+
+# print(
+#     f'Logistic Regression Performance Measures for Adult Salary Scale Dataset: Train\n'
+#     f'Accuracy: {accuracy}\n'
+#     f'Recall: {recall}\n'
+#     f'Specificity: {specificity}\n'
+#     f'Precision: {precision}\n'
+#     f'False Discovery Rate: {false_discovery_rate}\n'
+#     f'F1 Score: {f1_score}\n'
+# )
+
+# (
+#     accuracy, 
+#     recall, 
+#     specificity, 
+#     precision, 
+#     false_discovery_rate, 
+#     f1_score
+# ) = performance_matrix(test_adult_df_target, predict(test_adult_df_features, w))
+
+# print(
+#     f'Logistic Regression Performance Measures for Adult Salary Scale Dataset: Test\n'
+#     f'Accuracy: {accuracy}\n'
+#     f'Recall: {recall}\n'
+#     f'Specificity: {specificity}\n'
+#     f'Precision: {precision}\n'
+#     f'False Discovery Rate: {false_discovery_rate}\n'
+#     f'F1 Score: {f1_score}\n'
+# )
+
+print_LR_performance_measures(train_adult_df_features, train_adult_df_target,
+                           test_adult_df_features, test_adult_df_target,
+                           "Adult Salary scale", epochs=1000, learning_rate=0.01,
+                           early_stopping_threshold=0)
+
+"""
+    Credit Card Fraud Detection(Entire)
+"""
+# w = logistic_regression(
+#     train_creditcard_df_features, 
+#     train_creditcard_df_target, 
+#     epochs=1000, 
+#     learning_rate=0.01, 
+#     early_stopping_threshold=0
+# )
+
+# (
+#     accuracy, 
+#     recall, 
+#     specificity, 
+#     precision, 
+#     false_discovery_rate, 
+#     f1_score
+# ) = performance_matrix(train_creditcard_df_target, predict(train_creditcard_df_features, w))
+
+# print(
+#     f'Logistic Regression Performance Measures for Credit Card Fraud Detection Dataset (Entire): Train\n'
+#     f'Accuracy: {accuracy}\n'
+#     f'Recall: {recall}\n'
+#     f'Specificity: {specificity}\n'
+#     f'Precision: {precision}\n'
+#     f'False Discovery Rate: {false_discovery_rate}\n'
+#     f'F1 Score: {f1_score}\n'
+# )
+
+# (
+#     accuracy, 
+#     recall, 
+#     specificity, 
+#     precision, 
+#     false_discovery_rate, 
+#     f1_score
+# ) = performance_matrix(test_creditcard_df_target, predict(test_creditcard_df_features, w))
+
+# print(
+#     f'Logistic Regression Performance Measures for Credit Card Fraud Detection Dataset (Entire): Test\n'
+#     f'Accuracy: {accuracy}\n'
+#     f'Recall: {recall}\n'
+#     f'Specificity: {specificity}\n'
+#     f'Precision: {precision}\n'
+#     f'False Discovery Rate: {false_discovery_rate}\n'
+#     f'F1 Score: {f1_score}\n'
+# )
+
+print_LR_performance_measures(train_creditcard_df_features, train_creditcard_df_target,
+                           test_creditcard_df_features, test_creditcard_df_target,
+                           "Credit Card Fraud Detection (Entire)", epochs=1000, learning_rate=0.01,
+                           early_stopping_threshold=0)
+
+"""
+    Credit Card Fraud Detection(Smaller Subset)
+"""
+# w = logistic_regression(
+#     train_card_sub_df_features, 
+#     train_card_sub_df_target, 
+#     epochs=1000, 
+#     learning_rate=0.01, 
+#     early_stopping_threshold=0
+# )
+
+# (
+#     accuracy, 
+#     recall, 
+#     specificity, 
+#     precision, 
+#     false_discovery_rate, 
+#     f1_score
+# ) = performance_matrix(train_card_sub_df_target, predict(train_card_sub_df_features, w))
+
+# print(
+#     f'Logistic Regression Performance Measures for Credit Card Fraud Detection Dataset (Smaller Subset): Train\n'
+#     f'Accuracy: {accuracy}\n'
+#     f'Recall: {recall}\n'
+#     f'Specificity: {specificity}\n'
+#     f'Precision: {precision}\n'
+#     f'False Discovery Rate: {false_discovery_rate}\n'
+#     f'F1 Score: {f1_score}\n'
+# )
+
+# (
+#     accuracy, 
+#     recall, 
+#     specificity, 
+#     precision, 
+#     false_discovery_rate, 
+#     f1_score
+# ) = performance_matrix(test_card_sub_df_target, predict(test_card_sub_df_features, w))
+
+# print(
+#     f'Logistic Regression Performance Measures for Credit Card Fraud Detection Dataset (Smaller Subset): Test\n'
+#     f'Accuracy: {accuracy}\n'
+#     f'Recall: {recall}\n'
+#     f'Specificity: {specificity}\n'
+#     f'Precision: {precision}\n'
+#     f'False Discovery Rate: {false_discovery_rate}\n'
+#     f'F1 Score: {f1_score}\n'
+# )
+
+print_LR_performance_measures(train_card_sub_df_features, train_card_sub_df_target,
+                           test_card_sub_df_features, test_card_sub_df_target,
+                           "Credit Card Fraud Detection (Smaller Subset)", epochs=1000, learning_rate=0.01,
+                           early_stopping_threshold=0)
+
+#####################################################
+
+
+##########################Adaboost Performance Measures###########################
+"""
+    Telco Customer Churn
+"""
+# for K in range(5, 24, 5):
+#     (
+#         hypothesis, 
+#         hypothesis_weights
+#     ) = adaptive_boosting(train_telco_churn_features, train_telco_churn_target, num_of_estimators=K)
+    
+#     (
+#         accuracy, 
+#         recall, 
+#         specificity, 
+#         precision, 
+#         false_discovery_rate, 
+#         f1_score
+#     ) = performance_matrix(
+#         train_telco_churn_target, 
+#         weighted_majority(train_telco_churn_features, hypothesis, hypothesis_weights)
+#     )
+
+#     print(f'AdaBoost ({K} -> {len(hypothesis)} hypothesis) for Telco Customer Churn Dataset: Train\nAccuracy: {accuracy}\n')
+    
+#     (
+#         accuracy, 
+#         recall, 
+#         specificity, 
+#         precision, 
+#         false_discovery_rate, 
+#         f1_score
+#     ) = performance_matrix(
+#         test_telco_churn_target, 
+#         weighted_majority(test_telco_churn_features, hypothesis, hypothesis_weights)
+#     )
+
+#     print(f'AdaBoost ({K} -> {len(hypothesis)} hypothesis) for Telco Customer Churn Dataset: Test\nAccuracy: {accuracy}\n')
+
+print_adaboost_performance_measures(train_telco_churn_features, 
+                                    train_telco_churn_target,
+                                    test_telco_churn_features,
+                                    test_telco_churn_target,
+                                    "Telco Customer Churn"
+                                    )
+
+"""
+    Adult Salary Scale
+"""
+# for K in range(5, 24, 5):
+#     (
+#         hypothesis, 
+#         hypothesis_weights
+#     ) = adaptive_boosting(train_adult_df_features, train_adult_df_target, num_of_estimators=K)
+    
+#     (
+#         accuracy, 
+#         recall, 
+#         specificity, 
+#         precision, 
+#         false_discovery_rate, 
+#         f1_score
+#     ) = performance_matrix(
+#         train_adult_df_target, 
+#         weighted_majority(train_adult_df_features, hypothesis, hypothesis_weights)
+#     )
+
+#     print(f'AdaBoost ({K} -> {len(hypothesis)} hypothesis) for Adult Salary Scale Dataset: Train\nAccuracy: {accuracy}\n')
+    
+#     (
+#         accuracy, 
+#         recall, 
+#         specificity, 
+#         precision, 
+#         false_discovery_rate, 
+#         f1_score
+#     ) = performance_matrix(
+#         test_adult_df_target, 
+#         weighted_majority(test_adult_df_features, hypothesis, hypothesis_weights)
+#     )
+
+#     print(f'AdaBoost ({K} -> {len(hypothesis)} hypothesis) for Adult Salary Scale Dataset: Test\nAccuracy: {accuracy}\n')
+
+print_adaboost_performance_measures(train_adult_df_features, 
+                                    train_adult_df_target,
+                                    test_adult_df_features,
+                                    test_adult_df_target,
+                                    "Adult Salary Scale"
+                                    )
+
+"""
+    Credit Card Fraud Detection(Smaller Subset)
+"""
+# for K in range(5, 24, 5):
+#     (
+#         hypothesis, 
+#         hypothesis_weights
+#     ) = adaptive_boosting(train_card_sub_df_features, train_card_sub_df_target, num_of_estimators=K)
+    
+#     (
+#         accuracy, 
+#         recall, 
+#         specificity, 
+#         precision, 
+#         false_discovery_rate, 
+#         f1_score
+#     ) = performance_matrix(
+#         train_card_sub_df_target, 
+#         weighted_majority(train_card_sub_df_features, hypothesis, hypothesis_weights)
+#     )
+
+#     print(f'AdaBoost ({K} -> {len(hypothesis)} hypothesis) for Credit Card Fraud Detection Dataset: Train\nAccuracy: {accuracy}\n')
+    
+#     (
+#         accuracy, 
+#         recall, 
+#         specificity, 
+#         precision, 
+#         false_discovery_rate, 
+#         f1_score
+#     ) = performance_matrix(
+#         test_card_sub_df_target,
+#         weighted_majority(test_card_sub_df_features, hypothesis, hypothesis_weights)
+#     )
+
+#     print(f'AdaBoost ({K} -> {len(hypothesis)} hypothesis) for Credit Card Fraud Detection Dataset: Test\nAccuracy: {accuracy}\n')
+
+
+print_adaboost_performance_measures(train_card_sub_df_features, 
+                                    train_card_sub_df_target,
+                                    test_card_sub_df_features,
+                                    test_card_sub_df_target,
+                                    "Credit Card Fraud Detection(Smaller Subset)"
+                                    )
+#####################################################
