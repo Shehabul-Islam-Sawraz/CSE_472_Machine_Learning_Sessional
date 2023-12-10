@@ -313,6 +313,48 @@ def predict(x_train, w):
 #####################################################
 
 
+##########################Information Gain###########################
+def calculate_entropy(labels):
+    # Calculate entropy for a given set of labels
+    unique_labels, counts = np.unique(labels, return_counts=True)
+    probabilities = counts / len(labels)
+    entropy = -np.sum(probabilities * np.log2(probabilities))
+    return entropy
+
+def calculate_information_gain(data, labels, feature_index):
+    # Calculate information gain for a specific feature
+    total_entropy = calculate_entropy(labels)
+    unique_values = np.unique(data[:, feature_index])
+    
+    weighted_entropy = 0
+    for value in unique_values:
+        subset_indices = np.where(data[:, feature_index] == value)[0]
+        subset_labels = labels[subset_indices]
+        weighted_entropy += (len(subset_labels) / len(labels)) * calculate_entropy(subset_labels)
+    
+    return total_entropy - weighted_entropy
+
+def select_top_k_features(data, labels, data_test, k):
+    """
+        Select the top K features based on information gain
+    """
+    num_features = data.shape[1]
+    feature_scores = np.zeros(num_features)
+    
+    for i in range(num_features):
+        score = calculate_information_gain(data, labels, i)
+        feature_scores[i] = score
+    
+    # Sort features by their information gain
+    top_k_indices = np.argsort(feature_scores)[-k:]
+    # Select the top K features
+    selected_features = data[:, top_k_indices]
+    selected_test_features = data_test[:, top_k_indices]
+    return selected_features, selected_test_features
+
+#####################################################
+
+
 #########################Adaptive Boosting############################
 """
     Adaptive Boosting
@@ -397,14 +439,11 @@ def weighted_majority(X, hypothesis, hypothesis_weights):
     
     # Normalizing inputs X
     X = normalize(X)
-    
-    # X = np.concatenate((X, np.ones((num_samples, 1))), axis=1)
-    
+        
     # Calculating hypotheses
     y_predicts = []
     
     for i in range(num_hypotheses):
-        # y_predicted = (1 + sigmoid(np.dot(X, hypothesis[i]))) / 2
         y_predicted = predict(X, hypothesis[i])
         y_predicts.append([1 if y_pred >= 0.5 else -1 for y_pred in y_predicted])
         
@@ -529,7 +568,7 @@ def print_adaboost_performance_measures(X_train, y_train, X_test, y_test, datase
             weighted_majority(X_train, hypothesis, hypothesis_weights)
         )
 
-        print(f'AdaBoost (k -> {len(hypothesis)} hypothesis) for {dataset_name} Dataset: Train\nAccuracy: {accuracy}\n')
+        print(f'AdaBoost ({K} -> {len(hypothesis)} hypothesis) for {dataset_name} Dataset: Train\nAccuracy: {accuracy}\n')
         
         (
             accuracy, 
@@ -543,7 +582,7 @@ def print_adaboost_performance_measures(X_train, y_train, X_test, y_test, datase
             weighted_majority(X_test, hypothesis, hypothesis_weights)
         )
 
-        print(f'AdaBoost (k -> {len(hypothesis)} hypothesis) for {dataset_name} Dataset: Test\nAccuracy: {accuracy}\n')
+        print(f'AdaBoost ({K} -> {len(hypothesis)} hypothesis) for {dataset_name} Dataset: Test\nAccuracy: {accuracy}\n')
 
 #####################################################
 
@@ -615,34 +654,34 @@ test_card_sub_df_target = test_card_sub_df_target.reshape(test_card_sub_df_targe
     Telco Customer Churn
 """
 print_LR_performance_measures(train_telco_churn_features, train_telco_churn_target,
-                           test_telco_churn_features, test_telco_churn_target,
-                           "Telco Customer Churn", epochs=1000, learning_rate=0.01,
-                           early_stopping_threshold=0)
+                        test_telco_churn_features, test_telco_churn_target,
+                        "Telco Customer Churn", epochs=1000, learning_rate=0.01,
+                        early_stopping_threshold=0)
 
 """
     Adult Salary scale
 """
 print_LR_performance_measures(train_adult_df_features, train_adult_df_target,
-                           test_adult_df_features, test_adult_df_target,
-                           "Adult Salary scale", epochs=1000, learning_rate=0.01,
-                           early_stopping_threshold=0)
+                        test_adult_df_features, test_adult_df_target,
+                        "Adult Salary scale", epochs=1000, learning_rate=0.01,
+                        early_stopping_threshold=0)
 
 """
     Credit Card Fraud Detection(Entire)
 """
 print_LR_performance_measures(train_creditcard_df_features, train_creditcard_df_target,
-                           test_creditcard_df_features, test_creditcard_df_target,
-                           "Credit Card Fraud Detection (Entire)", epochs=1000, learning_rate=0.01,
-                           early_stopping_threshold=0)
+                        test_creditcard_df_features, test_creditcard_df_target,
+                        "Credit Card Fraud Detection (Entire)", epochs=1000, learning_rate=0.01,
+                        early_stopping_threshold=0)
 
 """
     Credit Card Fraud Detection(Smaller Subset)
 """
 print_LR_performance_measures(train_card_sub_df_features, train_card_sub_df_target,
-                           test_card_sub_df_features, test_card_sub_df_target,
-                           "Credit Card Fraud Detection (Smaller Subset)", epochs=1000, learning_rate=0.01,
-                           early_stopping_threshold=0)
-
+                        test_card_sub_df_features, test_card_sub_df_target,
+                        "Credit Card Fraud Detection (Smaller Subset)", epochs=1000, learning_rate=0.01,
+                        early_stopping_threshold=0)
+    
 #####################################################
 
 
@@ -650,30 +689,30 @@ print_LR_performance_measures(train_card_sub_df_features, train_card_sub_df_targ
 """
     Telco Customer Churn
 """
-print_adaboost_performance_measures(train_telco_churn_features, 
-                                    train_telco_churn_target,
-                                    test_telco_churn_features,
-                                    test_telco_churn_target,
+# train_telco_churn_features, test_telco_churn_features = select_top_k_features(train_telco_churn_features, 
+#                                 train_telco_churn_target, test_telco_churn_features, 26)
+print_adaboost_performance_measures(train_telco_churn_features, train_telco_churn_target,
+                                    test_telco_churn_features, test_telco_churn_target,
                                     "Telco Customer Churn"
                                     )
 
 """
     Adult Salary Scale
 """
-print_adaboost_performance_measures(train_adult_df_features, 
-                                    train_adult_df_target,
-                                    test_adult_df_features,
-                                    test_adult_df_target,
+# train_adult_df_features, test_adult_df_features = select_top_k_features(train_adult_df_features, 
+#                                 train_adult_df_target, test_adult_df_features, 82)
+print_adaboost_performance_measures(train_adult_df_features, train_adult_df_target,
+                                    test_adult_df_features, test_adult_df_target,
                                     "Adult Salary Scale"
                                     )
 
 """
     Credit Card Fraud Detection(Smaller Subset)
 """
-print_adaboost_performance_measures(train_card_sub_df_features, 
-                                    train_card_sub_df_target,
-                                    test_card_sub_df_features,
-                                    test_card_sub_df_target,
+# train_card_sub_df_features, test_card_sub_df_features = select_top_k_features(train_card_sub_df_features, 
+#                                 train_card_sub_df_target, test_card_sub_df_features, 82)
+print_adaboost_performance_measures(train_card_sub_df_features, train_card_sub_df_target,
+                                    test_card_sub_df_features, test_card_sub_df_target,
                                     "Credit Card Fraud Detection(Smaller Subset)"
                                     )
 #####################################################
