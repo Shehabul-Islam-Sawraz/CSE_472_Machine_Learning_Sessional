@@ -1,0 +1,554 @@
+D_784_128-RLU-D_128_26-SO_0.02
+Epoch 1/60
+Training Data Loss: 1.1728
+Training Data Accuracy: 67.1201%
+Validation Data Loss: 1.2217
+Validation Data Accuracy: 66.2286%
+MacroF1:  0.6643106184644901
+
+
+
+Epoch 2/60
+Training Data Loss: 1.0398
+Training Data Accuracy: 71.4385%
+Validation Data Loss: 1.0976
+Validation Data Accuracy: 70.4327%
+MacroF1:  0.704968964331244
+
+
+
+Epoch 3/60
+Training Data Loss: 0.8393
+Training Data Accuracy: 75.5430%
+Validation Data Loss: 0.9059
+Validation Data Accuracy: 74.2308%
+MacroF1:  0.7421372935282256
+
+
+
+Epoch 4/60
+Training Data Loss: 0.8188
+Training Data Accuracy: 76.7383%
+Validation Data Loss: 0.8962
+Validation Data Accuracy: 75.4380%
+MacroF1:  0.7552803772724588
+
+
+
+Epoch 5/60
+Training Data Loss: 0.7654
+Training Data Accuracy: 77.6829%
+Validation Data Loss: 0.8529
+Validation Data Accuracy: 76.5652%
+MacroF1:  0.7639230677175083
+
+
+
+Epoch 6/60
+Training Data Loss: 0.7470
+Training Data Accuracy: 78.7764%
+Validation Data Loss: 0.8389
+Validation Data Accuracy: 77.7137%
+MacroF1:  0.7757710903764401
+
+
+
+Epoch 7/60
+Training Data Loss: 0.7591
+Training Data Accuracy: 78.4879%
+Validation Data Loss: 0.8591
+Validation Data Accuracy: 76.9925%
+MacroF1:  0.7704053445254951
+
+
+
+Epoch 8/60
+Training Data Loss: 0.7036
+Training Data Accuracy: 79.6116%
+Validation Data Loss: 0.8096
+Validation Data Accuracy: 78.0823%
+MacroF1:  0.7799073227908835
+
+
+
+Epoch 9/60
+Training Data Loss: 0.6901
+Training Data Accuracy: 80.1282%
+Validation Data Loss: 0.8016
+Validation Data Accuracy: 78.4882%
+MacroF1:  0.7833908394667677
+
+
+
+Epoch 10/60
+Training Data Loss: 0.6576
+Training Data Accuracy: 81.3396%
+Validation Data Loss: 0.7848
+Validation Data Accuracy: 79.4498%
+MacroF1:  0.7936083882259737
+
+
+
+Epoch 11/60
+Training Data Loss: 0.6177
+Training Data Accuracy: 82.0748%
+Validation Data Loss: 0.7586
+Validation Data Accuracy: 80.0000%
+MacroF1:  0.7980397991655546
+
+
+
+Epoch 12/60
+Training Data Loss: 0.6605
+Training Data Accuracy: 81.2764%
+Validation Data Loss: 0.7923
+Validation Data Accuracy: 79.1613%
+MacroF1:  0.7890477303610167
+
+
+
+Epoch 13/60
+Training Data Loss: 0.6507
+Training Data Accuracy: 81.5564%
+Validation Data Loss: 0.7934
+Validation Data Accuracy: 79.4498%
+MacroF1:  0.7933126995911166
+
+
+
+Epoch 14/60
+Training Data Loss: 0.6356
+Training Data Accuracy: 82.1870%
+Validation Data Loss: 0.8002
+Validation Data Accuracy: 80.0855%
+MacroF1:  0.7995407753676507
+
+
+
+Epoch 15/60
+Training Data Loss: 0.6142
+Training Data Accuracy: 82.3567%
+Validation Data Loss: 0.7723
+Validation Data Accuracy: 79.9840%
+MacroF1:  0.7985271491606453
+
+
+
+Epoch 16/60
+Training Data Loss: 0.6240
+Training Data Accuracy: 82.2483%
+Validation Data Loss: 0.7876
+Validation Data Accuracy: 80.0214%
+MacroF1:  0.7984722426961764
+
+
+
+Epoch 17/60
+Training Data Loss: 0.6208
+Training Data Accuracy: 82.3878%
+Validation Data Loss: 0.8142
+Validation Data Accuracy: 79.7009%
+MacroF1:  0.7957596695175263
+
+
+
+Epoch 18/60
+Training Data Loss: 0.6211
+Training Data Accuracy: 82.0522%
+Validation Data Loss: 0.8072
+Validation Data Accuracy: 79.3429%
+MacroF1:  0.7906311487411377
+
+
+
+Epoch 19/60
+Training Data Loss: 0.6144
+Training Data Accuracy: 82.6018%
+Validation Data Loss: 0.8108
+Validation Data Accuracy: 80.1122%
+MacroF1:  0.8003007011947302
+
+
+
+Epoch 20/60
+Training Data Loss: 0.6701
+Training Data Accuracy: 81.2773%
+Validation Data Loss: 0.8656
+Validation Data Accuracy: 78.5951%
+MacroF1:  0.7835013939938773
+
+
+
+Epoch 21/60
+Training Data Loss: 0.6108
+Training Data Accuracy: 82.8111%
+Validation Data Loss: 0.8068
+Validation Data Accuracy: 80.1870%
+MacroF1:  0.8011497463119388
+
+
+
+Epoch 22/60
+Training Data Loss: 0.6238
+Training Data Accuracy: 82.3878%
+Validation Data Loss: 0.8355
+Validation Data Accuracy: 79.4284%
+MacroF1:  0.7925478114988189
+
+
+
+Epoch 23/60
+Training Data Loss: 0.6058
+Training Data Accuracy: 83.0618%
+Validation Data Loss: 0.8311
+Validation Data Accuracy: 79.9359%
+MacroF1:  0.7990025152710826
+
+
+
+Epoch 24/60
+Training Data Loss: 0.6450
+Training Data Accuracy: 81.7006%
+Validation Data Loss: 0.8518
+Validation Data Accuracy: 78.6966%
+MacroF1:  0.7842642637358475
+
+
+
+Epoch 25/60
+Training Data Loss: 0.6094
+Training Data Accuracy: 82.9006%
+Validation Data Loss: 0.8265
+Validation Data Accuracy: 79.9626%
+MacroF1:  0.7988148745963521
+
+
+
+Epoch 26/60
+Training Data Loss: 0.5892
+Training Data Accuracy: 83.3701%
+Validation Data Loss: 0.8062
+Validation Data Accuracy: 80.5288%
+MacroF1:  0.8049598027411146
+
+
+
+Epoch 27/60
+Training Data Loss: 0.6069
+Training Data Accuracy: 83.1137%
+Validation Data Loss: 0.8432
+Validation Data Accuracy: 80.4380%
+MacroF1:  0.8032853008099247
+
+
+
+Epoch 28/60
+Training Data Loss: 0.6234
+Training Data Accuracy: 83.0119%
+Validation Data Loss: 0.8637
+Validation Data Accuracy: 80.2618%
+MacroF1:  0.8017862468109741
+
+
+
+Epoch 29/60
+Training Data Loss: 0.6202
+Training Data Accuracy: 82.8299%
+Validation Data Loss: 0.8690
+Validation Data Accuracy: 79.7970%
+MacroF1:  0.7969475939440928
+
+
+
+Epoch 30/60
+Training Data Loss: 0.6347
+Training Data Accuracy: 82.4189%
+Validation Data Loss: 0.8859
+Validation Data Accuracy: 79.3857%
+MacroF1:  0.7915242294516143
+
+
+
+Epoch 31/60
+Training Data Loss: 0.6507
+Training Data Accuracy: 81.9636%
+Validation Data Loss: 0.9054
+Validation Data Accuracy: 78.7927%
+MacroF1:  0.7862508281502668
+
+
+
+Epoch 32/60
+Training Data Loss: 0.6171
+Training Data Accuracy: 83.0373%
+Validation Data Loss: 0.8720
+Validation Data Accuracy: 80.0374%
+MacroF1:  0.800036774402064
+
+
+
+Epoch 33/60
+Training Data Loss: 0.5971
+Training Data Accuracy: 83.2098%
+Validation Data Loss: 0.8581
+Validation Data Accuracy: 79.6581%
+MacroF1:  0.7953982777534203
+
+
+
+Epoch 34/60
+Training Data Loss: 0.6010
+Training Data Accuracy: 83.3795%
+Validation Data Loss: 0.8624
+Validation Data Accuracy: 80.3259%
+MacroF1:  0.8021738270155675
+
+
+
+Epoch 35/60
+Training Data Loss: 0.5902
+Training Data Accuracy: 83.1005%
+Validation Data Loss: 0.8529
+Validation Data Accuracy: 79.8504%
+MacroF1:  0.797745764434646
+
+
+
+Epoch 36/60
+Training Data Loss: 0.6342
+Training Data Accuracy: 82.0202%
+Validation Data Loss: 0.9063
+Validation Data Accuracy: 78.6111%
+MacroF1:  0.7860017451571795
+
+
+
+Epoch 37/60
+Training Data Loss: 0.5844
+Training Data Accuracy: 83.6614%
+Validation Data Loss: 0.8632
+Validation Data Accuracy: 79.9786%
+MacroF1:  0.7996195786190208
+
+
+
+Epoch 38/60
+Training Data Loss: 0.6177
+Training Data Accuracy: 83.1740%
+Validation Data Loss: 0.8907
+Validation Data Accuracy: 79.8825%
+MacroF1:  0.797807240986243
+
+
+
+Epoch 39/60
+Training Data Loss: 0.6062
+Training Data Accuracy: 82.6339%
+Validation Data Loss: 0.8816
+Validation Data Accuracy: 79.1880%
+MacroF1:  0.7908031714054207
+
+
+
+Epoch 40/60
+Training Data Loss: 0.6035
+Training Data Accuracy: 83.2325%
+Validation Data Loss: 0.8755
+Validation Data Accuracy: 79.8932%
+MacroF1:  0.7971885711472597
+
+
+
+Epoch 41/60
+Training Data Loss: 0.6490
+Training Data Accuracy: 82.1899%
+Validation Data Loss: 0.9295
+Validation Data Accuracy: 78.5630%
+MacroF1:  0.7852989642058805
+
+
+
+Epoch 42/60
+Training Data Loss: 0.6147
+Training Data Accuracy: 82.8233%
+Validation Data Loss: 0.9040
+Validation Data Accuracy: 79.1239%
+MacroF1:  0.7897636351418611
+
+
+
+Epoch 43/60
+Training Data Loss: 0.6339
+Training Data Accuracy: 82.2672%
+Validation Data Loss: 0.9273
+Validation Data Accuracy: 78.6218%
+MacroF1:  0.7860084829663067
+
+
+
+Epoch 44/60
+Training Data Loss: 0.6160
+Training Data Accuracy: 82.9657%
+Validation Data Loss: 0.9083
+Validation Data Accuracy: 79.5246%
+MacroF1:  0.7953011006839515
+
+
+
+Epoch 45/60
+Training Data Loss: 0.5860
+Training Data Accuracy: 83.6963%
+Validation Data Loss: 0.8858
+Validation Data Accuracy: 80.0481%
+MacroF1:  0.8008817157131138
+
+
+
+Epoch 46/60
+Training Data Loss: 0.5965
+Training Data Accuracy: 83.5304%
+Validation Data Loss: 0.8968
+Validation Data Accuracy: 79.8665%
+MacroF1:  0.7974709075676748
+
+
+
+Epoch 47/60
+Training Data Loss: 0.6483
+Training Data Accuracy: 82.1352%
+Validation Data Loss: 0.9485
+Validation Data Accuracy: 78.6165%
+MacroF1:  0.7847490925652157
+
+
+
+Epoch 48/60
+Training Data Loss: 0.6171
+Training Data Accuracy: 83.1288%
+Validation Data Loss: 0.9282
+Validation Data Accuracy: 79.3590%
+MacroF1:  0.7933817785446304
+
+
+
+Epoch 49/60
+Training Data Loss: 0.6419
+Training Data Accuracy: 82.1880%
+Validation Data Loss: 0.9406
+Validation Data Accuracy: 78.8088%
+MacroF1:  0.7874006348481706
+
+
+
+Epoch 50/60
+Training Data Loss: 0.6027
+Training Data Accuracy: 83.4681%
+Validation Data Loss: 0.9118
+Validation Data Accuracy: 79.5940%
+MacroF1:  0.7966337148883831
+
+
+
+Epoch 51/60
+Training Data Loss: 0.6254
+Training Data Accuracy: 82.7064%
+Validation Data Loss: 0.9404
+Validation Data Accuracy: 79.0278%
+MacroF1:  0.7889747581304961
+
+
+
+Epoch 52/60
+Training Data Loss: 0.6185
+Training Data Accuracy: 82.7837%
+Validation Data Loss: 0.9405
+Validation Data Accuracy: 78.9370%
+MacroF1:  0.7888098240946317
+
+
+
+Epoch 53/60
+Training Data Loss: 0.5968
+Training Data Accuracy: 83.1118%
+Validation Data Loss: 0.9205
+Validation Data Accuracy: 79.3376%
+MacroF1:  0.7932088868748075
+
+
+
+Epoch 54/60
+Training Data Loss: 0.5930
+Training Data Accuracy: 83.2344%
+Validation Data Loss: 0.9269
+Validation Data Accuracy: 79.1880%
+MacroF1:  0.7926102790854413
+
+
+
+Epoch 55/60
+Training Data Loss: 0.5955
+Training Data Accuracy: 83.6331%
+Validation Data Loss: 0.9216
+Validation Data Accuracy: 79.9733%
+MacroF1:  0.8002134677775167
+
+
+
+Epoch 56/60
+Training Data Loss: 0.6079
+Training Data Accuracy: 82.9487%
+Validation Data Loss: 0.9372
+Validation Data Accuracy: 79.2415%
+MacroF1:  0.7923325782057818
+
+
+
+Epoch 57/60
+Training Data Loss: 0.6156
+Training Data Accuracy: 83.1750%
+Validation Data Loss: 0.9506
+Validation Data Accuracy: 79.3803%
+MacroF1:  0.7912946483890093
+
+
+
+Epoch 58/60
+Training Data Loss: 0.7047
+Training Data Accuracy: 81.5130%
+Validation Data Loss: 1.0331
+Validation Data Accuracy: 77.7618%
+MacroF1:  0.7761011121022412
+
+
+
+Epoch 59/60
+Training Data Loss: 0.6035
+Training Data Accuracy: 83.0713%
+Validation Data Loss: 0.9354
+Validation Data Accuracy: 79.1026%
+MacroF1:  0.7898165501809797
+
+
+
+Epoch 60/60
+Training Data Loss: 0.6213
+Training Data Accuracy: 83.0298%
+Validation Data Loss: 0.9565
+Validation Data Accuracy: 79.3002%
+MacroF1:  0.7927082753967846
+
+
+
+Train Dataset: 
+CrossEntropy (Train Dataset): 0.6213
+Accuracy (Train Dataset): 83.0298%
+MacroF1 (Train Dataset):  0.8304199648860908
+Validation Dataset: 
+CrossEntropy (Validation Dataset): 0.9565
+Accuracy (Validation Dataset): 79.3002%
+MacroF1 (Validation Dataset):  0.7927082753967846
+Test dataset: 
+CrossEntropy (Test dataset): 0.9907
+Accuracy (Test dataset): 78.6875%
+MacroF1 (Test dataset):  0.7868150545404988
+Best accuracy for  D_784_128-RLU-D_128_26-SO_0.02  : 80.52884615384616

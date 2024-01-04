@@ -384,7 +384,7 @@ def adaptive_boosting(X, y, num_of_estimators):
         # multiple times.
         # p=example_weights: example_weights is likely an array 
         # of weights associated with each example, indicating the 
-        # probability of selecting each example.
+        # probability of selecting each example
         data = examples[np.random.choice(num_samples, size=num_samples, replace=True, p=example_weights)]
         
         data_X = data[:, :num_features]
